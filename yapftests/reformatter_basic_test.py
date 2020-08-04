@@ -3033,6 +3033,26 @@ my_dict = {
     finally:
       style.SetGlobalStyle(style.CreateYapfStyle())
 
+  def testForceMultilineDict_WithTopCSV(self):
+    try:
+      style.SetGlobalStyle(
+          style.CreateStyleFromConfig('{force_multiline_dict: true, split_all_top_level_comma_separated_values: true}'))
+      unformatted_code = textwrap.dedent("""\
+        responseDict = {'Meta-switches': magenta, 'Switches': yellow, 'Subcommands': blue}
+      """)
+      expected = textwrap.dedent("""\
+        responseDict = {
+            'Meta-switches': magenta,
+            'Switches': yellow,
+            'Subcommands': blue,
+        }
+      """)
+      uwlines = yapf_test_helper.ParseAndUnwrap(unformatted_code)
+      self.assertCodeEqual(expected,
+                           reformatter.Reformat(uwlines))
+    finally:
+      style.SetGlobalStyle(style.CreateYapfStyle())
+
 
 if __name__ == '__main__':
   unittest.main()
